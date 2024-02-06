@@ -105,36 +105,44 @@ clock.appendChild(elTablo);
 
 // Анимация
 let now;
+let hours;
+let minutes;
+let seconds;
 let hourAngle = 0;
 let minuteAngle = 0;
 let secondAngle = 0;
 function update() {
   now = new Date();
+  hours = now.getHours();
+  minutes = now.getMinutes();
+  seconds = now.getSeconds();
   //
   // Для угла секундной стрелки достаточно метода getSeconds() - он возвращает число в диапазоне 0 .. 59:
   //
-  // (getSeconds / 60) * 360°
+  // (seconds / 60) * 360°
   //
-  secondAngle = baseAngleDegree + (now.getSeconds() * 6);
+  secondAngle = baseAngleDegree + (seconds * 6);
   secondHand.setAttributeNS(null, "transform", `rotate(${secondAngle})`);
   //
   // Для угла минутной и часовой стрелок соответствующие значения из объекта Date переводятся в секунды:
   //
-  // (now.getMinutes() * 60) + now.getSeconds()
-  // ------------------------------------------ * 360°
-  //                    60 * 60
+  // (minutes * 60) + seconds
+  // ------------------------ * 360°
+  //          60 * 60
   //
-  minuteAngle = baseAngleDegree + ((now.getMinutes() * 60 + now.getSeconds()) / 10);
+  minuteAngle = baseAngleDegree + (((minutes * 60) + seconds) / 10);
   minuteHand.setAttributeNS(null, "transform", `rotate(${minuteAngle})`);
   //
-  // ((now.getHours() * 60 * 60) + (now.getMinutes() * 60) + now.getSeconds()
-  // ------------------------------------------------------------------------ * 360°
-  //                            12 * 60 * 60
+  // ((hours * 60 * 60) + (minutes * 60) + seconds
+  // --------------------------------------------- * 360°
+  //                  12 * 60 * 60
   //
-  hourAngle = baseAngleDegree + (((now.getHours() * 3600) + (now.getMinutes() * 60) + now.getSeconds()) / 120);
+  hourAngle = baseAngleDegree + (((hours * 3600) + (minutes * 60) + seconds) / 120);
   hourHand.setAttributeNS(null, "transform", `rotate(${hourAngle})`);
   
-  elTablo.textContent = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+  elTablo.textContent = hours.toString().padStart(2, '0');
+  elTablo.textContent += ':' + minutes.toString().padStart(2, '0');
+  elTablo.textContent += ':' + seconds.toString().padStart(2, '0');
   window.requestAnimationFrame(update);
 }
 update();
